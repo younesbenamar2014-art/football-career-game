@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Career Mode</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b1220;
+        color: white;
+    }
+
+    header {
+        background: #101b31;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 2px solid #1e90ff;
+    }
+
+    header h1 {
+        margin: 0 0 10px;
+    }
+
+    nav {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    button {
+        background: #168aad;
+        color: white;
+        border: none;
+        padding: 11px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 4px;
+    }
+
+    button:hover {
+        background: #1fa4ca;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .page {
+        display: none;
+    }
+
+    .active {
+        display: block;
+    }
+
+    .card {
+        background: #14233d;
+        padding: 18px;
+        border-radius: 12px;
+        margin: 12px 0;
+    }
+
+    .player {
+        background: #192b49;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    select, input {
+        padding: 10px;
+        border-radius: 7px;
+        border: none;
+        margin: 5px;
+        background: white;
+        color: black;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: #14233d;
+    }
+
+    th, td {
+        padding: 9px;
+        text-align: center;
+        border-bottom: 1px solid #30435f;
+    }
+
+    th {
+        background: #168aad;
+    }
+
+    .myclub {
+        background: #24516c;
+    }
+
+    .green {
+        color: #4ade80;
+    }
+
+    .yellow {
+        color: #facc15;
+    }
+
+    .red {
+        color: #fb7185;
+    }
+
+    .big {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    @media (max-width: 700px) {
+        table {
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>⚽ Football Career Mode</h1>
+
+    <nav>
+        <button onclick="toonPagina('home')">🏠 Home</button>
+        <button onclick="toonPagina('team')">👥 Mijn Team</button>
+        <button onclick="toonPagina('transfers')">🔄 Transfers</button>
+        <button onclick="toonPagina('matches')">⚽ Wedstrijden</button>
+        <button onclick="toonPagina('stand')">📊 Stand</button>
+        <button onclick="toonPagina('nieuws')">📰 Nieuws</button>
+    </nav>
+</header>
+
+<div class="container">
+
+<!-- HOME -->
+<section id="home" class="page active">
+
+    <div class="card">
+        <h2>🏠 Welkom bij Football Career Mode</h2>
+
+        <p>Word manager van je favoriete club.</p>
+
+        <h3>🏟️ Kies je club</h3>
+
+        <select id="clubKiezen">
+            <option value="">-- Kies een club --</option>
+        </select>
+
+        <br>
+
+        <button onclick="startCarriere()">🚀 Start carrière</button>
+
+        <p id="startBericht"></p>
+    </div>
+
+    <div class="card">
+        <h2>📋 Carrière</h2>
+
+        <p>🏟️ Club: <span id="homeClub">Nog niet gekozen</span></p>
+        <p>💰 Budget: €<span id="homeBudget">0</span>M</p>
+        <p>📅 Seizoen: <span id="homeSeizoen">1</span></p>
+        <p>📅 Speeldag: <span id="homeSpeeldag">0</span>/38</p>
+        <p>🏆 Titels: <span id="homeTitels">0</span></p>
+    </div>
+
+</section>
+
+
+<!-- TEAM -->
+<section id="team" class="page">
+
+    <div class="card">
+        <h2>👥 Mijn Team</h2>
+
+        <p>🏟️ <b id="teamNaam">Nog geen club</b></p>
+        <p>💰 Transferbudget: €<span id="teamBudget">0</span>M</p>
+
+        <div id="mijnSelectie"></div>
+    </div>
+
+</section>
+
+
+<!-- TRANSFERS -->
+<section id="transfers" class="page">
+
+    <div class="card">
+
+        <h2>🔄 Transfermarkt</h2>
+
+        <p>💰 Budget: €<span id="transferBudget">0</span>M</p>
+
+        <input
+            id="zoekSpeler"
+            type="text"
+            placeholder="🔎 Zoek speler..."
+            oninput="toonTransfers()"
+        >
+
+        <select id="positieFilter" onchange="toonTransfers()">
+            <option value="">Alle posities</option>
+            <option value="GK">GK</option>
+            <option value="DEF">DEF</option>
+            <option value="MID">MID</option>
+            <option value="ATT">ATT</option>
+        </select>
+
+        <div id="transferLijst"></div>
+
+    </div>
+
+</section>
+
+
+<!-- MATCHES -->
+<section id="matches" class="page">
+
+    <div class="card">
+
+        <h2>⚽ Wedstrijden</h2>
+
+        <p>
+            Seizoen <b id="matchSeizoen">1</b>
+            -
+            Speeldag <b id="matchSpeeldag">0</b>/38
+        </p>
+
+        <button onclick="speelSpeeldag()">
+            ▶️ Speel volgende speeldag
+        </button>
+
+        <div id="wedstrijdResultaat"></div>
+
+    </div>
+
+</section>
+
+
+<!-- STAND -->
+<section id="stand" class="page">
+
+    <div class="card">
+
+        <h2>📊 Competitiestand</h2>
+
+        <div id="competitieStand"></div>
+
+    </div>
+
+</section>
+
+
+<!-- NIEUWS -->
+<section id="nieuws" class="page">
+
+    <div class="card">
+
+        <h2>📰 Voetbalnieuws</h2>
+
+        <div id="nieuwsLijst">
+
+            <p>📰 Welkom bij je nieuwe carrière!</p>
+            <p>⚽ De transfermarkt is geopend.</p>
+            <p>🏆 Probeer de competitie te winnen.</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================
+   CLUBS
+========================= */
+
+const clubs = [
+
+    {naam:"FC Barcelona", competitie:"LaLiga", budget:100},
+    {naam:"Real Madrid", competitie:"LaLiga", budget:100},
+    {naam:"Atlético Madrid", competitie:"LaLiga", budget:100},
+    {naam:"Athletic Bilbao", competitie:"LaLiga", budget:70},
+    {naam:"Real Sociedad", competitie:"LaLiga", budget:70},
+    {naam:"Villarreal", competitie:"LaLiga", budget:70},
+    {naam:"Real Betis", competitie:"LaLiga", budget:60},
+    {naam:"Sevilla", competitie:"LaLiga", budget:60},
+    {naam:"Valencia", competitie:"LaLiga", budget:55},
+    {naam:"Girona", competitie:"LaLiga", budget:50},
+    {naam:"Celta Vigo", competitie:"LaLiga", budget:45},
+    {naam:"Getafe", competitie:"LaLiga", budget:40},
+    {naam:"Osasuna", competitie:"LaLiga", budget:40},
+    {naam:"Mallorca", competitie:"LaLiga", budget:40},
+    {naam:"Rayo Vallecano", competitie:"LaLiga", budget:35},
+    {naam:"Alavés", competitie:"LaLiga", budget:35},
+    {naam:"Espanyol", competitie:"LaLiga", budget:35},
+    {naam:"Levante", competitie:"LaLiga", budget:30},
+    {naam:"Elche", competitie:"LaLiga", budget:30},
+    {naam:"Deportivo", competitie:"LaLiga", budget:30}
+
+];
+
+
+/* =========================
+   SPELERS
+========================= */
+
+const spelers = [
+
+    {naam:"Lamine Yamal", club:"FC Barcelona", positie:"ATT", rating:89, prijs:120},
+    {naam:"Pedri", club:"FC Barcelona", positie:"MID", rating:89, prijs:100},
+    {naam:"Frenkie de Jong", club:"FC Barcelona", positie:"MID", rating:87, prijs:75},
+    {naam:"Raphinha", club:"FC Barcelona", positie:"ATT", rating:88, prijs:100},
+
+    {naam:"Kylian Mbappé", club:"Real Madrid", positie:"ATT", rating:91, prijs:180},
+    {naam:"Vinícius Jr.", club:"Real Madrid", positie:"ATT", rating:90, prijs:170},
+    {naam:"Jude Bellingham", club:"Real Madrid", positie:"MID", rating:90, prijs:160},
+    {naam:"Rodrygo", club:"Real Madrid", positie:"ATT", rating:87, prijs:100},
+
+    {naam:"Erling Haaland", club:"Manchester City", positie:"ATT", rating:91, prijs:190},
+    {naam:"Phil Foden", club:"Manchester City", positie:"ATT", rating:88, prijs:130},
+    {naam:"Rodri", club:"Manchester City", positie:"MID", rating:90, prijs:130},
+
+    {naam:"Mohamed Salah", club:"Liverpool", positie:"ATT", rating:89, prijs:100},
+    {naam:"Virgil van Dijk", club:"Liverpool", positie:"DEF", rating:89, prijs:80},
+
+    {naam:"William Saliba", club:"Arsenal", positie:"DEF", rating:87, prijs:90},
+    {naam:"Bukayo Saka", club:"Arsenal", positie:"ATT", rating:88, prijs:120},
+
+    {naam:"Harry Kane", club:"Bayern München", positie:"ATT", rating:90, prijs:110},
+    {naam:"Jamal Musiala", club:"Bayern München", positie:"MID", rating:88, prijs:130},
+
+    {naam:"Ousmane Dembélé", club:"PSG", positie:"ATT", rating:88, prijs:100},
+    {naam:"Achraf Hakimi", club:"PSG", positie:"DEF", rating:88, prijs:80},
+
+    {naam:"Lautaro Martínez", club:"Inter", positie:"ATT", rating:89, prijs:110},
+    {naam:"Alisson", club:"Liverpool", positie:"GK", rating:89, prijs:75},
+    {naam:"Thibaut Courtois", club:"Real Madrid", positie:"GK", rating:89, prijs:70},
+    {naam:"Theo Hernández", club:"AC Milan", positie:"DEF", rating:87, prijs:75},
+    {naam:"Rúben Dias", club:"Manchester City", positie:"DEF", rating:88, prijs:90}
+
+];
+
+
+/* =========================
+   SPEL VARIABELEN
+========================= */
+
+let mijnClub = "";
+let budget = 0;
+let mijnSelectie = [];
+
+let seizoen = 1;
+let speeldag = 0;
+let titels = 0;
+
+
+/* =========================
+   COMPETITIE
+========================= */
+
+let competitie = clubs.map(function(club){
+
+    return {
+        club: club.naam,
+        WG: 0,
+        W: 0,
+        G: 0,
+        V: 0,
+        DV: 0,
+        DT: 0,
+        DS: 0,
+        Ptn: 0
+    };
+
+});
+
+
+/* =========================
+   CLUB MENU
+========================= */
+
+const clubMenu = document.getElementById("clubKiezen");
+
+clubs.forEach(function(club){
+
+    let optie = document.createElement("option");
+
+    optie.value = club.naam;
+    optie.textContent =
+        club.naam + " - " + club.competitie;
+
+    clubMenu.appendChild(optie);
+
+});
+
+
+/* =========================
+   PAGINA'S
+========================= */
+
+function toonPagina(pagina){
+
+    document.querySelectorAll(".page").forEach(function(page){
+
+        page.classList.remove("active");
+
+    });
+
+    document.getElementById(pagina).classList.add("active");
+
+    if(pagina === "transfers"){
+        toonTransfers();
+    }
+
+    if(pagina === "team"){
+        toonSelectie();
+    }
+
+    if(pagina === "stand"){
+        toonStand();
+    }
+
+}
+
+
+/* =========================
+   CARRIÈRE STARTEN
+========================= */
+
+function startCarriere(){
+
+    let gekozen = clubMenu.value;
+
+    if(gekozen === ""){
+
+        document.getElementById("startBericht").innerText =
+            "❌ Kies eerst een club.";
+
+        return;
+
+    }
+
+    let club = clubs.find(function(c){
+        return c.naam === gekozen;
+    });
+
+    mijnClub = club.naam;
+    budget = club.budget;
+
+    document.getElementById("startBericht").innerText =
+        "✅ Carrière gestart met " + mijnClub + "!";
+
+    updateInfo();
+
+    toonSelectie();
+    toonStand();
+
+    voegNieuwsToe(
+        "🚀 Je carrière bij " + mijnClub + " is begonnen!"
+    );
+
+}
+
+
+/* =========================
+   INFO UPDATEN
+========================= */
+
+function updateInfo(){
+
+    document.getElementById("homeClub").innerText = mijnClub || "Nog niet gekozen";
+
+    document.getElementById("homeBudget").innerText = budget;
+
+    document.getElementById("homeSeizoen").innerText = seizoen;
+
+    document.getElementById("homeSpeeldag").innerText = speeldag;
+
+    document.getElementById("homeTitels").innerText = titels;
+
+    document.getElementById("teamNaam").innerText = mijnClub || "Nog geen club";
+
+    document.getElementById("teamBudget").innerText = budget;
+
+    document.getElementById("transferBudget").innerText = budget;
+
+    document.getElementById("matchSeizoen").innerText = seizoen;
+
+    document.getElementById("matchSpeeldag").innerText = speeldag;
+
+}
+
+
+/* =========================
+   TRANSFERMARKT
+========================= */
+
+function toonTransfers(){
+
+    let zoek = document
+        .getElementById("zoekSpeler")
+        .value
+        .toLowerCase();
+
+    let positie =
+        document.getElementById("positieFilter").value;
+
+    let lijst =
+        document.getElementById("transferLijst");
+
+    lijst.innerHTML = "";
+
+    let gevonden = spelers.filter(function(speler){
+
+        let naamGoed =
+            speler.naam.toLowerCase().includes(zoek);
+
+        let positieGoed =
+            positie === "" || speler.positie === positie;
+
+        return naamGoed && positieGoed;
+
+    });
+
+
+    if(gevonden.length === 0){
+
+        lijst.innerHTML =
+            "<p>❌ Geen spelers gevonden.</p>";
+
+        return;
+
+    }
+
+
+    gevonden.forEach(function(speler){
+
+        let div = document.createElement("div");
+
+        div.className = "player";
+
+        div.innerHTML = `
+
+            <div>
+                <h3>⭐ ${speler.naam}</h3>
+
+                <p>
+                    ⚽ ${speler.positie}
+                    |
+                    ⭐ ${speler.rating}
+                </p>
+
+                <p>
+                    💰 €${speler.prijs}M
+                </p>
+            </div>
+
+            <button onclick="koopSpeler('${speler.naam}')">
+                💰 Kopen
+            </button>
+
+        `;
+
+        lijst.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================
+   SPELER KOPEN
+========================= */
+
+function koopSpeler(naam){
+
+    let speler =
+        spelers.find(function(s){
+            return s.naam === naam;
+        });
+
+    if(!speler) return;
+
+
+    if(mijnClub === ""){
+
+        alert("Kies eerst een club!");
+
+        return;
+
+    }
+
+
+    if(budget < speler.prijs){
+
+        alert("❌ Niet genoeg transferbudget!");
+
+        return;
+
+    }
+
+
+    let alInTeam =
+        mijnSelectie.some(function(s){
+            return s.naam === speler.naam;
+        });
+
+    if(alInTeam){
+
+        alert("Deze speler zit al in je selectie!");
+
+        return;
+
+    }
+
+
+    budget -= speler.prijs;
+
+    mijnSelectie.push({
+        naam: speler.naam,
+        positie: speler.positie,
+        rating: speler.rating,
+        prijs: speler.prijs
+    });
+
+
+    voegNieuwsToe(
+        "🔄 " + speler.naam +
+        " tekent voor " + mijnClub + "!"
+    );
+
+    updateInfo();
+
+    toonTransfers();
+
+    toonSelectie();
+
+}
+
+
+/* =========================
+   MIJN SELECTIE
+========================= */
+
+function toonSelectie(){
+
+    let div =
+        document.getElementById("mijnSelectie");
+
+    div.innerHTML = "";
+
+
+    if(mijnClub === ""){
+
+        div.innerHTML =
+            "<p>❌ Kies eerst een club.</p>";
+
+        return;
+
+    }
+
+
+    if(mijnSelectie.length === 0){
+
+        div.innerHTML =
+            "<p>Je hebt nog geen nieuwe spelers gekocht.</p>";
+
+        return;
+
+    }
+
+
+    mijnSelectie.forEach(function(speler){
+
+        let spelerDiv =
+            document.createElement("div");
+
+        spelerDiv.className = "player";
+
+        spelerDiv.innerHTML = `
+
+            <div>
+
+                <h3>⭐ ${speler.naam}</h3>
+
+                <p>
+                    ⚽ ${speler.positie}
+                    |
+                    ⭐ Rating ${speler.rating}
+                </p>
+
+            </div>
+
+        `;
+
+        div.appendChild(spelerDiv);
+
+    });
+
+}
+
+
+/* =========================
+   WEDSTRIJD
+========================= */
+
+function speelSpeeldag(){
+
+    if(mijnClub === ""){
+
+        alert("Kies eerst een club!");
+
+        return;
+
+    }
+
+
+    if(speeldag >= 38){
+
+        eindeSeizoen();
+
+        return;
+
+    }
+
+
+    speeldag++;
+
+
+    let mijnTeam =
+        competitie.find(function(t){
+            return t.club === mijnClub;
+        });
+
+
+    let tegenstanders =
+        competitie.filter(function(t){
+            return t.club !== mijnClub;
+        });
+
+
+    let tegenstander =
+        tegenstanders[
+            Math.floor(
+                Math.random() *
+                tegenstanders.length
+            )
+        ];
+
+
+    let mijnGoals =
+        Math.floor(Math.random() * 5);
+
+    let tegenGoals =
+        Math.floor(Math.random() * 5);
+
+
+    verwerkWedstrijd(
+        mijnTeam,
+        tegenstander,
+        mijnGoals,
+        tegenGoals
+    );
+
+
+    let resultaat = "";
+
+    if(mijnGoals > tegenGoals){
+
+        resultaat = "🏆 GEWONNEN!";
+
+    } else if(mijnGoals < tegenGoals){
+
+        resultaat = "❌ VERLOREN";
+
+    } else {
+
+        resultaat = "🤝 GELIJK";
+
+    }
+
+
+    document.getElementById("wedstrijdResultaat").innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                ${mijnClub}
+                ${mijnGoals}
+                -
+                ${tegenGoals}
+                ${tegenstander.club}
+            </h2>
+
+            <h3>${resultaat}</h3>
+
+        </div>
+
+    `;
+
+
+    voegNieuwsToe(
+        "⚽ " +
+        mijnClub +
+        " " +
+        mijnGoals +
+        "-" +
+        tegenGoals +
+        " " +
+        tegenstander.club
+    );
+
+
+    updateInfo();
+
+    toonStand();
+
+
+    if(speeldag === 38){
+
+        setTimeout(function(){
+
+            eindeSeizoen();
+
+        }, 500);
+
+    }
+
+}
+
+
+/* =========================
+   WEDSTRIJD VERWERKEN
+========================= */
+
+function verwerkWedstrijd(
+    thuis,
+    uit,
+    goalsThuis,
+    goalsUit
+){
+
+    thuis.WG++;
+    uit.WG++;
+
+    thuis.DV += goalsThuis;
+    thuis.DT += goalsUit;
+
+    uit.DV += goalsUit;
+    uit.DT += goalsThuis;
+
+
+    if(goalsThuis > goalsUit){
+
+        thuis.W++;
+        uit.V++;
+
+    }
+
+    else if(goalsThuis < goalsUit){
+
+        uit.W++;
+        thuis.V++;
+
+    }
+
+    else{
+
+        thuis.G++;
+        uit.G++;
+
+    }
+
+}
+
+
+/* =========================
+   STAND
+========================= */
+
+function toonStand(){
+
+    competitie.forEach(function(team){
+
+        team.DS =
+            team.DV -
+            team.DT;
+
+        team.Ptn =
+            team.W * 3 +
+            team.G;
+
+    });
+
+
+    competitie.sort(function(a,b){
+
+        if(b.Ptn !== a.Ptn){
+
+            return b.Ptn - a.Ptn;
+
+        }
+
+        if(b.DS !== a.DS){
+
+            return b.DS - a.DS;
+
+        }
+
+        return b.DV - a.DV;
+
+    });
+
+
+    let html = `
+
+        <table>
+
+            <tr>
+
+                <th>#</th>
+                <th>Club</th>
+                <th>WG</th>
+                <th>W</th>
+                <th>G</th>
+                <th>V</th>
+                <th>DV</th>
+                <th>DT</th>
+                <th>DS</th>
+                <th>Ptn</th>
+
+            </tr>
+
+    `;
+
+
+    competitie.forEach(function(team,index){
+
+        let klasse = "";
+
+        if(team.club === mijnClub){
+
+            klasse = "myclub";
+
+        }
+
+
+        html += `
+
+            <tr class="${klasse}">
+
+                <td>${index + 1}</td>
+
+                <td style="text-align:left">
+                    ${team.club}
+                </td>
+
+                <td>${team.WG}</td>
+
+                <td>${team.W}</td>
+
+                <td>${team.G}</td>
+
+                <td>${team.V}</td>
+
+                <td>${team.DV}</td>
+
+                <td>${team.DT}</td>
+
+                <td>${team.DS}</td>
+
+                <td><b>${team.Ptn}</b></td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    html += "</table>";
+
+    document.getElementById("competitieStand").innerHTML =
+        html;
+
+}
+
+
+/* =========================
+   EINDE SEIZOEN
+========================= */
+
+function eindeSeizoen(){
+
+    let mijnTeam =
+        competitie.find(function(t){
+            return t.club === mijnClub;
+        });
+
+
+    toonStand();
+
+
+    if(competitie[0].club === mijnClub){
+
+        titels++;
+
+        voegNieuwsToe(
+            "🏆 " +
+            mijnClub +
+            " is KAMPIOEN!"
+        );
+
+        alert(
+            "🏆 PROFICIAT!\n\n" +
+            mijnClub +
+            " is kampioen!"
+        );
+
+    }
+
+    else{
+
+        voegNieuwsToe(
+            "🏁 Het seizoen is afgelopen."
+        );
+
+    }
+
+
+    seizoen++;
+
+    speeldag = 0;
+
+    budget += 50;
+
+
+    competitie.forEach(function(team){
+
+        team.WG = 0;
+        team.W = 0;
+        team.G = 0;
+        team.V = 0;
+        team.DV = 0;
+        team.DT = 0;
+        team.DS = 0;
+        team.Ptn = 0;
+
+    });
+
+
+    voegNieuwsToe(
+        "💰 Je krijgt €50M extra transferbudget voor het nieuwe seizoen!"
+    );
+
+
+    updateInfo();
+
+    toonStand();
+
+}
+
+
+/* =========================
+   NIEUWS
+========================= */
+
+function voegNieuwsToe(bericht){
+
+    let lijst =
+        document.getElementById("nieuwsLijst");
+
+    let p =
+        document.createElement("p");
+
+    p.innerText = bericht;
+
+    lijst.prepend(p);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+updateInfo();
+
+toonStand();
+
+</script>
+
+</body>
+</html>
